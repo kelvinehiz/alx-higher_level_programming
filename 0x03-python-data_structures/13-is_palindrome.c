@@ -1,63 +1,72 @@
 #include "lists.h"
 
 /**
- * reverse - reverses the second half of the list
+ * reverse_listint - reverses a linked list
+ * @head: pointer to the first node in the list
  *
- * @h_r: head of the second half
- * Return: no return
+ * Return: pointer to the first node in the new list
  */
-void reverse(listint_t **h_r)
+void reverse_listint(listint_t **head)
 {
-	listint_t *prv;
-	listint_t *crr;
-	listint_t *nxt;
+	listint_t *prev = NULL;
+	listint_t *current = *head;
+	listint_t *next = NULL;
 
-	prv = NULL;
-	crr = *h_r;
-
-	while (crr != NULL)
+	while (current)
 	{
-		nxt = crr->next;
-		crr->next = prv;
-		prv = crr;
-		crr = nxt;
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
 	}
 
-	*h_r = prv;
+	*head = prev;
 }
 
 /**
- * compare - compares each int of the list
+ * is_palindrome - checks if a linked list is a palindrome
+ * @head: double pointer to the linked list
  *
- * @h1: head of the first half
- * @h2: head of the second half
- * Return: 1 if are equals, 0 if not
+ * Return: 1 if it is, 0 if not
  */
-int compare(listint_t *h1, listint_t *h2)
+int is_palindrome(listint_t **head)
 {
-	listint_t *tmp1;
-	listint_t *tmp2;
+	listint_t *slow = *head, *fast = *head, *temp = *head, *dup = NULL;
 
-	tmp1 = h1;
-	tmp2 = h2;
+	if (*head == NULL || (*head)->next == NULL)
+		return (1);
 
-	while (tmp1 != NULL && tmp2 != NULL)
+	while (1)
 	{
-		if (tmp1->n == tmp2->n)
+		fast = fast->next->next;
+		if (!fast)
 		{
-			tmp1 = tmp1->next;
-			tmp2 = tmp2->next;
+			dup = slow->next;
+			break;
+		}
+		if (!fast->next)
+		{
+			dup = slow->next->next;
+			break;
+		}
+		slow = slow->next;
+	}
+
+	reverse_listint(&dup);
+
+	while (dup && temp)
+	{
+		if (temp->n == dup->n)
+		{
+			dup = dup->next;
+			temp = temp->next;
 		}
 		else
-		{
 			return (0);
-		}
 	}
 
-	if (tmp1 == NULL && tmp2 == NULL)
-	{
+	if (!dup)
 		return (1);
-	}
 
 	return (0);
 }
